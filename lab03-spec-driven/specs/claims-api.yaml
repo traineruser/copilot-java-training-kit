@@ -1,0 +1,239 @@
+openapi: 3.0.3
+info:
+  title: Insurance Claims API
+  description: REST API for managing insurance claims submissions and processing
+  version: 1.0.0
+  contact:
+    name: Training Team
+
+servers:
+  - url: http://localhost:8080/api
+    description: Local development server
+
+paths:
+  /claims:
+    get:
+      summary: List all claims
+      description: Returns a paginated list of all insurance claims
+      operationId: getAllClaims
+      parameters:
+        - name: status
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/ClaimStatus'
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 20
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ClaimResponse'
+
+    post:
+      summary: Submit a new insurance claim
+      description: Creates a new insurance claim and returns the created claim
+      operationId: createClaim
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClaimRequest'
+      responses:
+        '201':
+          description: Claim created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClaimResponse'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /claims/{claimId}:
+    get:
+      summary: Get claim by ID
+      operationId: getClaimById
+      parameters:
+        - name: claimId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Claim found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClaimResponse'
+        '404':
+          description: Claim not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    put:
+      summary: Update an existing claim
+      operationId: updateClaim
+      parameters:
+        - name: claimId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClaimRequest'
+      responses:
+        '200':
+          description: Claim updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClaimResponse'
+        '404':
+          description: Claim not found
+
+    delete:
+      summary: Cancel a claim
+      operationId: cancelClaim
+      parameters:
+        - name: claimId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Claim cancelled successfully
+        '404':
+          description: Claim not found
+
+components:
+  schemas:
+    ClaimRequest:
+      type: object
+      required:
+        - policyNumber
+        - claimType
+        - description
+        - incidentDate
+        - claimAmount
+      properties:
+        policyNumber:
+          type: string
+          description: The policy number this claim is against
+          minLength: 5
+          maxLength: 20
+          example: "POL-2024-001"
+        claimType:
+          $ref: '#/components/schemas/ClaimType'
+        description:
+          type: string
+          description: Detailed description of the claim
+          minLength: 10
+          maxLength: 1000
+          example: "Vehicle collision at intersection"
+        incidentDate:
+          type: string
+          format: date
+          description: Date the incident occurred (cannot be future date)
+          example: "2024-01-15"
+        claimAmount:
+          type: number
+          format: decimal
+          description: Requested claim amount in USD
+          minimum: 1.00
+          example: 5000.00
+        supportingDocuments:
+          type: array
+          items:
+            type: string
+          description: List of document references (optional)
+
+    ClaimResponse:
+      type: object
+      properties:
+        claimId:
+          type: string
+          description: Unique claim identifier (auto-generated)
+        policyNumber:
+          type: string
+        claimType:
+          $ref: '#/components/schemas/ClaimType'
+        description:
+          type: string
+        incidentDate:
+          type: string
+          format: date
+        claimAmount:
+          type: number
+          format: decimal
+        status:
+          $ref: '#/components/schemas/ClaimStatus'
+        submittedAt:
+          type: string
+          format: date-time
+        lastUpdatedAt:
+          type: string
+          format: date-time
+
+    ClaimType:
+      type: string
+      enum:
+        - AUTO_COLLISION
+        - AUTO_THEFT
+        - HOME_FIRE
+        - HOME_FLOOD
+        - HOME_THEFT
+        - LIFE_DEATH
+        - MEDICAL
+      description: Type of insurance claim
+
+    ClaimStatus:
+      type: string
+      enum:
+        - SUBMITTED
+        - UNDER_REVIEW
+        - APPROVED
+        - REJECTED
+        - CANCELLED
+      description: Current status of the claim
+
+    ErrorResponse:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        status:
+          type: integer
+        message:
+          type: string
+        errors:
+          type: array
+          items:
+            type: string

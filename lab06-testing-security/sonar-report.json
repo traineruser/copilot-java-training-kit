@@ -1,0 +1,123 @@
+{
+  "projectKey": "com.training:lab06-testing-security",
+  "analysisDate": "2024-01-15T10:30:00Z",
+  "qualityGate": {
+    "status": "FAILED",
+    "conditions": [
+      { "metric": "coverage", "status": "FAILED", "actualValue": "34.2", "threshold": "80.0" },
+      { "metric": "critical_violations", "status": "FAILED", "actualValue": "3", "threshold": "0" },
+      { "metric": "code_smells", "status": "FAILED", "actualValue": "12", "threshold": "5" }
+    ]
+  },
+  "issues": [
+    {
+      "key": "ISSUE-001",
+      "rule": "java:S2077",
+      "severity": "CRITICAL",
+      "component": "com.training.UserQueryService",
+      "line": 57,
+      "message": "Make sure that executing SQL queries is safe here. Formatted SQL queries can be vulnerable to SQL injection.",
+      "type": "VULNERABILITY",
+      "effort": "5min",
+      "debt": "5min",
+      "tags": ["sql", "injection", "owasp-a3"]
+    },
+    {
+      "key": "ISSUE-002",
+      "rule": "java:S2068",
+      "severity": "CRITICAL",
+      "component": "com.training.UserQueryService",
+      "line": 34,
+      "message": "Remove this hard-coded password. Credentials should not be hard-coded.",
+      "type": "VULNERABILITY",
+      "effort": "30min",
+      "debt": "30min",
+      "tags": ["credentials", "hard-coded", "owasp-a2"]
+    },
+    {
+      "key": "ISSUE-003",
+      "rule": "java:S5164",
+      "severity": "CRITICAL",
+      "component": "com.training.UserQueryService",
+      "line": 93,
+      "message": "Make sure deserializing user input is safe here. Insecure deserialization can allow remote code execution.",
+      "type": "VULNERABILITY",
+      "effort": "1h",
+      "debt": "1h",
+      "tags": ["deserialization", "rce", "owasp-a8"]
+    },
+    {
+      "key": "ISSUE-004",
+      "rule": "java:S112",
+      "severity": "HIGH",
+      "component": "com.training.ClaimProcessorService",
+      "line": 45,
+      "message": "Define and throw a dedicated exception class instead of using a generic exception.",
+      "type": "CODE_SMELL",
+      "effort": "20min",
+      "debt": "20min",
+      "tags": ["error-handling", "design"]
+    },
+    {
+      "key": "ISSUE-005",
+      "rule": "java:S1192",
+      "severity": "HIGH",
+      "component": "com.training.ClaimProcessorService",
+      "line": 78,
+      "message": "Define a constant instead of duplicating this literal '25000.00' 3 times.",
+      "type": "CODE_SMELL",
+      "effort": "10min",
+      "debt": "10min",
+      "tags": ["design", "constants"]
+    },
+    {
+      "key": "ISSUE-006",
+      "rule": "java:S2095",
+      "severity": "HIGH",
+      "component": "com.training.UserQueryService",
+      "line": 105,
+      "message": "Use try-with-resources or close this FileInputStream in a 'finally' clause.",
+      "type": "BUG",
+      "effort": "5min",
+      "debt": "5min",
+      "tags": ["resource-leak", "io"]
+    },
+    {
+      "key": "ISSUE-007",
+      "rule": "java:S1874",
+      "severity": "MEDIUM",
+      "component": "com.training.ClaimProcessorService",
+      "line": 23,
+      "message": "Remove this use of 'System.out.println'. Use a logger instead.",
+      "type": "CODE_SMELL",
+      "effort": "5min",
+      "debt": "5min",
+      "tags": ["logging", "bad-practice"]
+    },
+    {
+      "key": "ISSUE-008",
+      "rule": "java:S1135",
+      "severity": "INFO",
+      "component": "com.training.ClaimProcessorServiceTest",
+      "line": 55,
+      "message": "Complete the task associated to this 'TODO' comment.",
+      "type": "CODE_SMELL",
+      "effort": "0min",
+      "debt": "0min",
+      "tags": ["design"]
+    }
+  ],
+  "metrics": {
+    "lines_of_code": 245,
+    "coverage": 34.2,
+    "duplicated_lines_density": 2.1,
+    "critical_violations": 3,
+    "major_violations": 2,
+    "minor_violations": 7,
+    "code_smells": 12,
+    "bugs": 1,
+    "vulnerabilities": 3,
+    "security_hotspots": 2,
+    "technical_debt": "2h 15min"
+  }
+}
